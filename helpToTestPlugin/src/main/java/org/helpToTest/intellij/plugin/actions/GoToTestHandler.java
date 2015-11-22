@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testIntegration.GotoTestOrCodeHandler;
@@ -18,6 +19,10 @@ public class GoToTestHandler extends GotoTargetHandler {
     @Override
     protected String getFeatureUsedKey() {
         return "org.moreunit.actions.goToTest";
+    }
+
+    private static GotoData emptyData(PsiElement el) {
+        return new GotoData(el, new PsiElement[0], Collections.emptyList());
     }
 
     @Nullable
@@ -38,7 +43,7 @@ public class GoToTestHandler extends GotoTargetHandler {
             }
         }
 
-        return null;
+        return emptyData(psiFile);
     }
 
     private boolean isTestSelected(PsiElement selectedElement) {

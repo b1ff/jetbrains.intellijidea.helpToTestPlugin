@@ -1,7 +1,6 @@
 package main.java.org.helpToTest.intellij.plugin.utils;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.SmartList;
@@ -14,7 +13,6 @@ public class TestFilesHelper {
         String currentFileName = psiFile.getName();
         Project project = psiFile.getProject();
 
-        Messages.showInfoMessage(project, currentFileName, "The File");
         String ext = getExtension(currentFileName);
         String withoutExt = currentFileName.replace(ext, "") + "spec." + ext;
         return PsiShortNamesCache.getInstance(project).getFilesByName(withoutExt);
@@ -42,6 +40,8 @@ public class TestFilesHelper {
 
     private static final List<String> testConventions = new SmartList<>();
     {
-        testConventions.add(".spec");
+        testConventions.add(".spec.");
+        testConventions.add(".specs.");
+        testConventions.add(".test.");
     }
 }

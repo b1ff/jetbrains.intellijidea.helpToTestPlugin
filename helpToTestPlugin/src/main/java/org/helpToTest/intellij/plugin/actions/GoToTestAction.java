@@ -43,25 +43,7 @@ public class GoToTestAction extends BaseCodeInsightAction {
     @Override
     public void update(AnActionEvent event) {
         Presentation p = event.getPresentation();
-        p.setEnabled(false);
-        Project project = event.getData(CommonDataKeys.PROJECT);
-        Editor editor = event.getData(CommonDataKeys.EDITOR);
-        if (editor == null || project == null) return;
-
-        PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
-        if (psiFile == null) return;
-
-        PsiElement element = GotoTestOrCodeHandler.getSelectedElement(editor, psiFile);
-
-        if (TestFinderHelper.findSourceElement(element) == null) return;
-
         p.setEnabled(true);
-        if (TestFinderHelper.isTest(element)) {
-            p.setText(ActionsBundle.message("action.GotoTestSubject.text"));
-            p.setDescription(ActionsBundle.message("action.GotoTestSubject.description"));
-        } else {
-            p.setText(ActionsBundle.message("action.GotoTest.text"));
-            p.setDescription(ActionsBundle.message("action.GotoTest.description"));
-        }
+        // todo: implement disabling logic if it is impossible to test current file.
     }
 }
