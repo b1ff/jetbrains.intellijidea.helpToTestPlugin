@@ -1,0 +1,6 @@
+[+] Find test file and open
+[+] Create a test file if file was not found
+[-] If test file is opened, find source file and open
+[-] Pre-fill path to new test (source?)
+[-] Allow to enter test file name
+[-] Put template to test file (Jasmine, etc.)

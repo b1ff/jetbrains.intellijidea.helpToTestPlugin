@@ -10,12 +10,17 @@ import java.util.List;
 
 public class TestFilesHelper {
     public static PsiFile[] findTestCandidates(@NotNull PsiFile psiFile) {
-        String currentFileName = psiFile.getName();
+        String expectedTestFileName = getExpectedTestName(psiFile);
         Project project = psiFile.getProject();
+        return PsiShortNamesCache.getInstance(project).getFilesByName(expectedTestFileName);
+    }
+
+    @NotNull
+    public static String getExpectedTestName(@NotNull PsiFile psiFile) {
+        String currentFileName = psiFile.getName();
 
         String ext = getExtension(currentFileName);
-        String withoutExt = currentFileName.replace(ext, "") + "spec." + ext;
-        return PsiShortNamesCache.getInstance(project).getFilesByName(withoutExt);
+        return currentFileName.replace(ext, "") + "spec." + ext;
     }
 
     public static String getExtension(String fileName) {
@@ -29,13 +34,19 @@ public class TestFilesHelper {
 
     public static boolean isTestFile(PsiFile psiFile) {
         String fileName = psiFile.getName();
-        for (String part: testConventions) {
+        for (String part : testConventions) {
             if (fileName.contains(part)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public static boolean isKnownType(PsiFile psiFile) {
+        // TODO: too dummy implementation, need to check that fie is registered file type
+        String extension = getExtension(psiFile.getName());
+        return extension.equalsIgnoreCase("js") || extension == "ts" || extension.equalsIgnoreCase("coffee") || extension == "jsx" || extension == "tsx";
     }
 
     private static final List<String> testConventions = new SmartList<>();
