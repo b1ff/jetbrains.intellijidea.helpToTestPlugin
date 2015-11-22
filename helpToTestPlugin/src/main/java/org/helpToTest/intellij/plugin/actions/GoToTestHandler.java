@@ -4,10 +4,10 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.testIntegration.GotoTestOrCodeHandler;
+import main.java.org.helpToTest.intellij.plugin.utils.TestFilesHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,35 +23,26 @@ public class GoToTestHandler extends GotoTargetHandler {
     @Nullable
     @Override
     protected GotoData getSourceAndTargetElements(Editor editor, PsiFile psiFile) {
-        String currentFileName = psiFile.getName();
-        Project project = editor.getProject();
-        if (project == null) {
+        if (psiFile == null) {
             return null;
         }
 
-        Messages.showInfoMessage(project, currentFileName, "The File");
-        String ext = getExtension(currentFileName);
-        String withoutExt = currentFileName.replace(ext, "") + "spec." + ext;
-        PsiFile[] files = PsiShortNamesCache.getInstance(project).getFilesByName(withoutExt);
-        if (files.length > 0) {
-            return new GotoTargetHandler.GotoData(psiFile, files, Collections.emptyList());
+        if (TestFilesHelper.isTestFile(psiFile) || isTestSelected(GotoTestOrCodeHandler.getSelectedElement(editor, psiFile))) {
+            // todo: go to source
+        } else {
+            PsiFile[] files = TestFilesHelper.findTestCandidates(psiFile);
+            if (files.length > 0) {
+                return new GotoTargetHandler.GotoData(psiFile, files, Collections.emptyList());
+            } else {
+                // todo: create test dialog
+            }
         }
 
         return null;
-//        PsiDirectory testDir = DirectoryIndex.getInstance(project).getDirectoriesByPackageName()
     }
 
-
-
-    public static String getExtension(String fileName) {
-        String ext = null;
-        String s = fileName;
-        int i = s.lastIndexOf('.');
-
-        if (i > 0 &&  i < s.length() - 1) {
-            ext = s.substring(i+1).toLowerCase();
-        }
-        return ext;
+    private boolean isTestSelected(PsiElement selectedElement) {
+        return false;
     }
 
     @NotNull

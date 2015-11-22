@@ -2,25 +2,19 @@ package main.java.org.helpToTest.intellij.plugin.actions;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
-import com.intellij.codeInsight.navigation.GotoTargetHandler;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.testIntegration.GotoTestOrCodeHandler;
+import com.intellij.testIntegration.TestFinderHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
-/**
- * Created by eugene on 15.11.2015.
- */
 public class GoToTestAction extends BaseCodeInsightAction {
 
     @Override
@@ -38,21 +32,6 @@ public class GoToTestAction extends BaseCodeInsightAction {
         }
 
         this.actionPerformedImpl(project, editor);
-//        final PsiFile psiFile = file;
-//        CommandProcessor.getInstance().executeCommand(project, () -> {
-//            final CodeInsightActionHandler handler = GoToTestAction.this.getHandler();
-//            Runnable action = () -> {
-//                if(ApplicationManager.getApplication().isUnitTestMode() || editor.getContentComponent().isShowing()) {
-//                    handler.invoke(project, editor, psiFile);
-//                }
-//            };
-//            if(handler.startInWriteAction()) {
-//                ApplicationManager.getApplication().runWriteAction(action);
-//            } else {
-//                action.run();
-//            }
-//
-//        }, this.getCommandName(), DocCommandGroupId.noneGroupId(editor.getDocument()));
     }
 
     @NotNull
@@ -61,6 +40,28 @@ public class GoToTestAction extends BaseCodeInsightAction {
         return new GoToTestHandler();
     }
 
+    @Override
+    public void update(AnActionEvent event) {
+        Presentation p = event.getPresentation();
+        p.setEnabled(false);
+        Project project = event.getData(CommonDataKeys.PROJECT);
+        Editor editor = event.getData(CommonDataKeys.EDITOR);
+        if (editor == null || project == null) return;
 
+        PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
+        if (psiFile == null) return;
 
+        PsiElement element = GotoTestOrCodeHandler.getSelectedElement(editor, psiFile);
+
+        if (TestFinderHelper.findSourceElement(element) == null) return;
+
+        p.setEnabled(true);
+        if (TestFinderHelper.isTest(element)) {
+            p.setText(ActionsBundle.message("action.GotoTestSubject.text"));
+            p.setDescription(ActionsBundle.message("action.GotoTestSubject.description"));
+        } else {
+            p.setText(ActionsBundle.message("action.GotoTest.text"));
+            p.setDescription(ActionsBundle.message("action.GotoTest.description"));
+        }
+    }
 }
