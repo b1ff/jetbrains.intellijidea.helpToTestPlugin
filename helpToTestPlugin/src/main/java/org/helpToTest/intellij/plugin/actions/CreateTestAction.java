@@ -2,8 +2,6 @@ package main.java.org.helpToTest.intellij.plugin.actions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
@@ -93,28 +91,27 @@ public class CreateTestAction extends PsiElementBaseIntentionAction {
         if (the_root == null) {
             throw new IOException("Can't find '" + target + "' among roots");
         }
-        if (the_rest != null) {
-            final LocalFileSystem lfs = LocalFileSystem.getInstance();
-            final PsiManager psi_mgr = PsiManager.getInstance(project);
-            String[] dirs = the_rest.split("/");
-            int i = 0;
-            if ("".equals(dirs[0])) i = 1;
-            while (i < dirs.length) {
-                VirtualFile subdir = the_root.findChild(dirs[i]);
-                if (subdir != null) {
-                    if (!subdir.isDirectory()) {
-                        throw new IOException("Expected dir, but got non-dir: " + subdir.getPath());
-                    }
-                }
-                else {
-                    subdir = the_root.createChildDirectory(lfs, dirs[i]);
-                }
 
-                the_root = subdir;
-                i += 1;
+        final LocalFileSystem lfs = LocalFileSystem.getInstance();
+        final PsiManager psi_mgr = PsiManager.getInstance(project);
+        String[] dirs = the_rest.split("/");
+        int i = 0;
+        if ("".equals(dirs[0])) i = 1;
+        while (i < dirs.length) {
+            VirtualFile subdir = the_root.findChild(dirs[i]);
+            if (subdir != null) {
+                if (!subdir.isDirectory()) {
+                    throw new IOException("Expected dir, but got non-dir: " + subdir.getPath());
+                }
             }
-            ret = psi_mgr.findDirectory(the_root);
+            else {
+                subdir = the_root.createChildDirectory(lfs, dirs[i]);
+            }
+
+            the_root = subdir;
+            i += 1;
         }
+        ret = psi_mgr.findDirectory(the_root);
         return ret;
     }
 

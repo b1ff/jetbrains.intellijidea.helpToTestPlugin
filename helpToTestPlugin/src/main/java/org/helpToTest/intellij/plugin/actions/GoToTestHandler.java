@@ -41,7 +41,8 @@ public class GoToTestHandler extends GotoTargetHandler {
         }
 
         if (TestFilesHelper.isTestFile(psiFile) || isTestSelected(GotoTestOrCodeHandler.getSelectedElement(editor, psiFile))) {
-            // todo: go to source
+            // todo: implement go to source file here.
+            return null;
         } else {
             PsiFile[] files = TestFilesHelper.findTestCandidates(psiFile);
             if (files.length > 0) {
@@ -70,8 +71,6 @@ public class GoToTestHandler extends GotoTargetHandler {
                 // todo: create test dialog
             }
         }
-
-        return emptyData(psiFile);
     }
 
     private boolean isTestSelected(PsiElement selectedElement) {

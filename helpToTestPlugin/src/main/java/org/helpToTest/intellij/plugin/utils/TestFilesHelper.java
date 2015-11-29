@@ -2,17 +2,19 @@ package main.java.org.helpToTest.intellij.plugin.utils;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class TestFilesHelper {
+
     public static PsiFile[] findTestCandidates(@NotNull PsiFile psiFile) {
         String expectedTestFileName = getExpectedTestName(psiFile);
         Project project = psiFile.getProject();
-        return PsiShortNamesCache.getInstance(project).getFilesByName(expectedTestFileName);
+        return FilenameIndex.getFilesByName(project, expectedTestFileName, GlobalSearchScope.allScope(project));
     }
 
     @NotNull
@@ -43,14 +45,8 @@ public class TestFilesHelper {
         return false;
     }
 
-    public static boolean isKnownType(PsiFile psiFile) {
-        // TODO: too dummy implementation, need to check that fie is registered file type
-        String extension = getExtension(psiFile.getName());
-        return extension.equalsIgnoreCase("js") || extension == "ts" || extension.equalsIgnoreCase("coffee") || extension == "jsx" || extension == "tsx";
-    }
-
     private static final List<String> testConventions = new SmartList<>();
-    {
+    static {
         testConventions.add(".spec.");
         testConventions.add(".specs.");
         testConventions.add(".test.");

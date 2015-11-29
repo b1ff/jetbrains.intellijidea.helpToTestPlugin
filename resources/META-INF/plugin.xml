@@ -1,17 +1,23 @@
 <idea-plugin version="2">
-  <id>com.your.company.unique.plugin.id</id>
-  <name>Plugin display name here</name>
-  <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <id>com.intellij.plugins.helpToTest</id>
+  <name>Help To Test</name>
+  <version>0.0.1</version>
+  <vendor email="evgeniy.moroz@gmail.com">Eugene Moroz</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Helps you to test front end applications.<br>
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      <ul>
+        <li>
+          <strong>0.0.1</strong>
+          <ul>
+            <li>Navigates to test file searching by name convention.</li>
+            <li>Simple file creation if filename is not found.</li>
+          </ul>
+        </li>
+      </ul>
     ]]>
   </change-notes>
 
@@ -20,10 +26,8 @@
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
-  <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
-  -->
-
+  <depends>com.intellij.modules.platform</depends>
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
   </extensions>
@@ -31,7 +35,7 @@
   <actions>
     <!-- Add your actions here -->
     <action id="HelpToTest.GoToTestAction" class="main.java.org.helpToTest.intellij.plugin.actions.GoToTestAction"
-            text="Goto Test ( Smart)" description="Jump to test file or create a test if it does not exist.">
+            text="Goto Test" description="Jump to test file or create a test if it does not exist.">
       <add-to-group group-id="EditorPopupMenu.GoTo" anchor="after" relative-to-action="GotoTest"/>
     </action>
   </actions>
